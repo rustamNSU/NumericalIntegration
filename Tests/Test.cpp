@@ -2,6 +2,7 @@
 #include "gtest/gtest.h"
 #include "Test.hpp"
 #include "NumericalIntegration.hpp"
+#include <iostream>
 
 constexpr double test_func(double x)
 {
@@ -10,8 +11,26 @@ constexpr double test_func(double x)
 
 TEST(NumericalIntegrationUnitTest, GaussianQuadratureBase)
 {
-    double eps = 1e-8;
-
     EXPECT_DOUBLE_EQ(0.0, NumericalIntegration::GaussianQuadrature_1p_1d_base<double>(test_func));
-    EXPECT_DOUBLE_EQ(4.0 / 3.0, NumericalIntegration::GaussianQuadrature_2p_1d_base<double>(test_func));
+
+    constexpr double test_2p = NumericalIntegration::GaussianQuadrature_2p_1d_base<double>(test_func);
+    std::cout << NumericalIntegration::GaussianQuadrature_2p_1d_base<int>(test_func) << std::endl
+              << NumericalIntegration::GaussianQuadrature_2p_1d_base<double>(test_func);
+
+    EXPECT_DOUBLE_EQ(2.0 / 3.0, test_2p);
+    EXPECT_DOUBLE_EQ(2.0, NumericalIntegration::Trapezoidal_1d_base<double>(test_func));
+}
+
+TEST(NumericalIntegrationUnitTest, LambdaAsFunction)
+{
+    auto test_lambda = [](double x) constexpr
+    { 
+        return (x+1)*x*x; 
+    };
+
+    EXPECT_DOUBLE_EQ(0.0, NumericalIntegration::GaussianQuadrature_1p_1d_base<double>(test_lambda));
+
+    constexpr double test_2p = NumericalIntegration::GaussianQuadrature_2p_1d_base<double>(test_lambda);
+    EXPECT_DOUBLE_EQ(2.0 / 3.0, test_2p);
+    EXPECT_DOUBLE_EQ(2.0, NumericalIntegration::Trapezoidal_1d_base<double>(test_lambda));
 }
