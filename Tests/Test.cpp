@@ -34,3 +34,10 @@ TEST(NumericalIntegrationUnitTest, LambdaAsFunction)
     EXPECT_DOUBLE_EQ(2.0 / 3.0, test_2p);
     EXPECT_DOUBLE_EQ(2.0, NumericalIntegration::Trapezoidal_1d_base<double>(test_lambda));
 }
+
+TEST(NumericalIntegrationUnitTest, GaussianQuadratureScaling)
+{
+    EXPECT_DOUBLE_EQ(2.25, NumericalIntegration::GaussianQuadrature_1p_1d_scaling(test_func, 1.0, 2.0));
+    EXPECT_DOUBLE_EQ(2.25, NumericalIntegration::GaussianQuadrature_1p_1d_scaling(test_func, 1.0, 2.0));
+    EXPECT_DOUBLE_EQ(2.0, NumericalIntegration::Trapezoidal_1d_base<double>(test_func));
+}
