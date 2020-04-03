@@ -1,2 +1,2 @@
 # NumericalIntegration
-Numerical integration on compile time, Gauss, Trapezoid
+Numerical integration on compile time (GaussQuadrature)
