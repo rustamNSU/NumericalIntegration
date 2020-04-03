@@ -49,7 +49,7 @@ constexpr double GetWeight(size_t index)
 
 
 template <size_t points_number, typename Function>
-constexpr double GaussianQuadrature(
+constexpr double GaussianQuadratureBasic(
     Function &function, ///< Function or lambda-expression
     double left = -1.0,
     double right = 1.0)
@@ -65,6 +65,26 @@ constexpr double GaussianQuadrature(
     }
 
     return result * scaling_coef;
+}
+
+template <size_t points_number, typename Function>
+constexpr double GaussianQuadrature(
+    Function &function, ///< Function or lambda-expression
+    double left = -1.0,
+    double right = 1.0,
+    size_t meshNumber = 1)
+{
+    double result = 0.0;
+    double step = (right - left) / meshNumber;
+    double tmp_left = left;
+    for (size_t i = 0; i < meshNumber; ++i)
+    {
+        result += GaussianQuadratureBasic<points_number>(function,
+                                                         tmp_left,
+                                                         tmp_left + step);
+        tmp_left += step;
+    }
+    return result;
 }
 
 
