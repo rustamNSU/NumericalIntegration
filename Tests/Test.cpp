@@ -3,41 +3,41 @@
 #include "Test.hpp"
 #include "NumericalIntegration.hpp"
 #include <iostream>
+#include <tuple>
+#include <cmath>
 
-constexpr double test_func(double x)
+constexpr double polynomial_2(double x)
 {
-    return x*x;
+    return x * x;
 }
 
-TEST(NumericalIntegrationUnitTest, GaussianQuadratureBase)
+constexpr double my_pow(double x, size_t power)
 {
-    EXPECT_DOUBLE_EQ(0.0, NumericalIntegration::GaussianQuadrature_1p_1d_base<double>(test_func));
-
-    constexpr double test_2p = NumericalIntegration::GaussianQuadrature_2p_1d_base<double>(test_func);
-    std::cout << NumericalIntegration::GaussianQuadrature_2p_1d_base<int>(test_func) << std::endl
-              << NumericalIntegration::GaussianQuadrature_2p_1d_base<double>(test_func);
-
-    EXPECT_DOUBLE_EQ(2.0 / 3.0, test_2p);
-    EXPECT_DOUBLE_EQ(2.0, NumericalIntegration::Trapezoidal_1d_base<double>(test_func));
+    double result = 1.0;
+    for (size_t i = 0; i < power; ++i)
+    {
+        result *= x;
+    }
+    return result;
 }
 
-TEST(NumericalIntegrationUnitTest, LambdaAsFunction)
+TEST(NumericalIntegrationUnitTest, GaussianQuadrature)
 {
-    auto test_lambda = [](double x) constexpr
-    { 
-        return (x+1)*x*x; 
+    constexpr double a = std::get<3>(NumericalIntegration::GaussianQuadraturePoints)[0];
+    constexpr double b = NumericalIntegration::GetPoint<3>(0);
+    EXPECT_DOUBLE_EQ(a, b);
+
+    constexpr double r1 = NumericalIntegration::GaussianQuadrature<0>(polynomial_2);
+    EXPECT_DOUBLE_EQ(r1, 0.0);
+
+    constexpr double r2 = NumericalIntegration::GaussianQuadrature<1>(polynomial_2);
+    EXPECT_DOUBLE_EQ(r2, 2.0 / 3.0);
+
+    constexpr auto lambda_7 = [](double x)
+    {
+        return my_pow(x, 7) - 10 * my_pow(x, 5) - 2;
     };
-
-    EXPECT_DOUBLE_EQ(0.0, NumericalIntegration::GaussianQuadrature_1p_1d_base<double>(test_lambda));
-
-    constexpr double test_2p = NumericalIntegration::GaussianQuadrature_2p_1d_base<double>(test_lambda);
-    EXPECT_DOUBLE_EQ(2.0 / 3.0, test_2p);
-    EXPECT_DOUBLE_EQ(2.0, NumericalIntegration::Trapezoidal_1d_base<double>(test_lambda));
-}
-
-TEST(NumericalIntegrationUnitTest, GaussianQuadratureScaling)
-{
-    EXPECT_DOUBLE_EQ(2.25, NumericalIntegration::GaussianQuadrature_1p_1d_scaling(test_func, 1.0, 2.0));
-    EXPECT_DOUBLE_EQ(2.25, NumericalIntegration::GaussianQuadrature_1p_1d_scaling(test_func, 1.0, 2.0));
-    EXPECT_DOUBLE_EQ(2.0, NumericalIntegration::Trapezoidal_1d_base<double>(test_func));
+    constexpr double r3 = NumericalIntegration::GaussianQuadrature<3>(lambda_7, 2.0, 3.0);
+    EXPECT_DOUBLE_EQ(r3, -(7733.0 / 24.0));
+    
 }
