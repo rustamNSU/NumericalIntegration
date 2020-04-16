@@ -69,3 +69,31 @@ TEST(NumericalIntegrationTest, GaussianQuadrature)
         std::cout << std::left << std::pow(2, i) << result[i] - 1024.0 / 3.0 << std::endl;
     }
 }
+
+TEST(NumericalIntegrationTest, Beautifier)
+{
+    constexpr auto lambda_11 = [](double x)
+    {
+        return my_pow(x, 11);
+    };
+
+    constexpr size_t n = 6;
+    constexpr size_t nPoint = 2;
+
+    constexpr std::array<double, n> result
+    {
+        NumericalIntegration::NumericalIntegration(lambda_11, nPoint, 0.0, 2.0, 1),
+        NumericalIntegration::NumericalIntegration(lambda_11, nPoint, 0.0, 2.0, 2),
+        NumericalIntegration::NumericalIntegration(lambda_11, nPoint, 0.0, 2.0, 4),
+        NumericalIntegration::NumericalIntegration(lambda_11, nPoint, 0.0, 2.0, 8),
+        NumericalIntegration::NumericalIntegration(lambda_11, nPoint, 0.0, 2.0, 16),
+        NumericalIntegration::NumericalIntegration(lambda_11, nPoint, 0.0, 2.0, 32)
+    };
+    std::cout.width(20);
+    std::cout << std::left << "Edges number" << "Absolute error" << std::endl;
+    for (int i = 0; i < n; ++i)
+    {
+        std::cout.width(20);
+        std::cout << std::left << std::pow(2, i) << result[i] - 1024.0 / 3.0 << std::endl;
+    }
+}
