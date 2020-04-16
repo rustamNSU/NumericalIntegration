@@ -100,10 +100,9 @@ constexpr double NumericalIntegration(Function &function,
     if (method == 2){
         return GaussianQuadrature<2>(function, left, right, meshNumber);
     }
-    if (method == 3){
+    if (method == 3) {
         return GaussianQuadrature<3>(function, left, right, meshNumber);
     }
-    
 }
 
 } // namespace NumericalIntegration
